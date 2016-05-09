@@ -25,7 +25,11 @@ auto fix_newlines(string s) {
 }
 
 void main(string[] args) {
-    readText("typescript")
+    if (args.length == 1) {
+        return;
+    }
+
+    readText(args[1])
         .remove_backspaces
         .remove_ansi
         .fix_newlines
