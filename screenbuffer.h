@@ -1,6 +1,9 @@
 #ifndef SCREENBUFFER_H
 #define SCREENBUFFER_H
 
+#include "stdlib.h"
+#include "stdbool.h"
+
 #define SB_MAX_WIDTH  1024
 #define SB_MAX_HEIGHT 30
 

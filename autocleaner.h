@@ -1,6 +1,9 @@
 #ifndef AUTOCLEANER_H
 #define AUTOCLEANER_H
 
+#include "stdlib.h"
+#include "stdbool.h"
+
 #define MAX_CLEANERS 16
 #define AC_FUNC(f) ((void (*)(void*)) &f)
 

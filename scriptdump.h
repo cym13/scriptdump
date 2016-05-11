@@ -1,6 +1,7 @@
 #ifndef SCRIPTDUMP_H
 #define SCRIPTDUMP_H
 
+#include "screenbuffer.h"
 #include "autocleaner.h"
 
 #define error(msg)                                          \
