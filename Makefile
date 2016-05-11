@@ -16,13 +16,16 @@ LIBS =
 # first target entry is the target invoked when typing 'make'
 default: scriptdump
 
-scriptdump: $(OUT_DIR) $(OUT_DIR)/autocleaner.c.o $(OUT_DIR)/screenbuffer.c.o $(OUT_DIR)/scriptdump.c.o
+
+
+$(OUT_DIR):
+	@echo -n 'Creating output directory'
+	@mkdir -p $(OUT_DIR)
+
+scriptdump: $(OUT_DIR)  $(OUT_DIR)/autocleaner.c.o $(OUT_DIR)/screenbuffer.c.o $(OUT_DIR)/scriptdump.c.o
 	@echo -n 'Linking scriptdump... '
 	@$(CC) $(CFLAGS) -o scriptdump $(OUT_DIR)/autocleaner.c.o $(OUT_DIR)/screenbuffer.c.o $(OUT_DIR)/scriptdump.c.o $(LIBS)
 	@echo Done.
-
-$(OUT_DIR):
-	mkdir "$(OUT_DIR)"
 
 $(OUT_DIR)/autocleaner.c.o: autocleaner.c autocleaner.h
 	@echo -n 'Compiling autocleaner.c... '
