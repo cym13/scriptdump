@@ -330,35 +330,59 @@ bool isAnsiTrailChar(char c) {
 }
 
 void feedInput(char* fname) {
-    FILE* typescript = fopen(fname, "r");
-    if (!typescript)
-        error("cannot open the given file");
+    FILE* typescript;
 
-    acPush(autocleaner, AC_FUNC(fclose), typescript);
+    if (strcmp(fname, "-") == 0) {
+        typescript = stdin;
+    }
+    else {
+        typescript = fopen(fname, "r");
+
+        if (!typescript)
+            error("cannot open the given file");
+
+        acPush(autocleaner, AC_FUNC(fclose), typescript);
+    }
 
     struct stat buf;
 
-    if (fstat(fileno(typescript), &buf)) {
+    if (fstat(fileno(typescript), &buf))
         error("cannot stat file");
-    }
 
     size_t fsize = buf.st_size;
     acPop(autocleaner);
 
+    if (fsize == 0)
+        fsize = MAX_STDIN_INPUT;
+
     INPUT = malloc((fsize + 1) * sizeof(char));
 
-    if (!INPUT) {
-        fclose(typescript);
+    if (!INPUT)
         error("out of memory");
-    }
 
     acPush(autocleaner, AC_FUNC(free), INPUT);
 
-    INPUT[fsize] = EOF;
-
-    if (!fread(INPUT, sizeof(char), fsize, typescript)) {
+    if (!fread(INPUT, sizeof(char), fsize, typescript) && !typescript)
         error("cannot read file");
+
+    if (fsize = MAX_STDIN_INPUT) {
+        fsize = strlen(INPUT);
+        char* new_buffer = malloc(sizeof(char) * fsize);
+
+        if (!new_buffer)
+            error("out of memory");
+
+        strcpy(new_buffer, INPUT);
+        free(INPUT);
+
+        INPUT = new_buffer;
     }
+    else {
+        fclose(typescript);
+        acPop(autocleaner);
+    }
+
+    INPUT[fsize] = EOF;
 
     LOOK = INPUT[0];
 }
@@ -369,7 +393,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if ((argv[1] == "-h") || (argv[1] == "--help")) {
+    if (!strcmp(argv[1], "-h") || (!strcmp(argv[1], "--help"))) {
         printHelp(stdout);
         return 0;
     }
@@ -401,7 +425,6 @@ int main(int argc, char *argv[]) {
 
     free(INPUT);
     acPop(autocleaner);
-
 
     return 0;
 }

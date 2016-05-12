@@ -23,6 +23,7 @@
     }while(0)
 
 #define MAX_ANSI_PARAM_LENGTH 32
+#define MAX_STDIN_INPUT       65536
 
 void match(char c);
 
