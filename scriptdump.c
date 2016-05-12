@@ -274,15 +274,12 @@ bool specialChar(ScreenBuffer sb) {
 
         case '\n':
             match('\n');
-            sbPut(sb, '\n');
-            sbMoveTo(sb, sb->line, 0);
             sbMove(sb, DOWN);
             return true;
 
         case '\r':
             match('\r');
-            if (LOOK != '\n')
-                sbMoveTo(sb, sb->line, 0);
+            sbMoveTo(sb, sb->line, 0);
             return true;
     }
     return false;
@@ -376,8 +373,11 @@ int main(int argc, char *argv[]) {
         error("parsing failed");
     }
 
-    for (size_t line = 0 ; line < SB_MAX_HEIGHT ; line++)
-        printf("%s", sb->data[line]);
+    for (size_t line = 0 ; line < SB_MAX_HEIGHT ; line++) {
+        if (sb->data[line][0] == '\0')
+            continue;
+        printf("%s\n", sb->data[line]);
+    }
 
     sbClean(sb);
     acPop(autocleaner);
