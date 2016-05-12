@@ -5,7 +5,7 @@
 #include "stdbool.h"
 
 #define SB_MAX_WIDTH  1024
-#define SB_MAX_HEIGHT 1024
+#define SB_MAX_HEIGHT 4096
 
 typedef struct ScreenBuffer* ScreenBuffer;
 struct ScreenBuffer {
