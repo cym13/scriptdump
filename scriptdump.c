@@ -63,92 +63,93 @@ bool csiCode(ScreenBuffer sb) {
 
     match('[');
 
-    long n = -1;
-    long m = -1;
+    long p[8];
 
-    if (!csiParam(sb, &n, &m))
+    memset(p, -1, 8);
+
+    if (!csiParam(sb, p))
         return false;
 
     switch (LOOK) {
         case 'A':
             match('A');
-            if (n == -1)
-                n = 1;
+            if (p[0] == -1)
+                p[0] = 1;
 
-            for (size_t i=0 ; i<n ; i++)
+            for (size_t i=0 ; i<p[0] ; i++)
                 if (sb->data[sb->line-i][sb->col] == '\0')
                     sb->data[sb->line-i][sb->col] = ' ';
 
-            sbMoveBy(sb, UP, n);
+            sbMoveBy(sb, UP, p[0]);
             break;
 
         case 'B':
             match('B');
-            if (n == -1)
-                n = 1;
+            if (p[0] == -1)
+                p[0] = 1;
 
-            for (size_t i=0 ; i<n ; i++)
+            for (size_t i=0 ; i<p[0] ; i++)
                 if (sb->data[sb->line+i][sb->col] == '\0')
                     sb->data[sb->line+i][sb->col] = ' ';
 
-            sbMoveBy(sb, DOWN, n);
+            sbMoveBy(sb, DOWN, p[0]);
             break;
 
         case 'C':
             match('C');
-            if (n == -1)
-                n = 1;
+            if (p[0] == -1)
+                p[0] = 1;
 
-            for (size_t i=0 ; i<n ; i++)
+            for (size_t i=0 ; i<p[0] ; i++)
                 if (sb->data[sb->line][sb->col+i] == '\0')
                     sb->data[sb->line][sb->col+i] = ' ';
 
-            sbMoveBy(sb, RIGHT, n);
+            sbMoveBy(sb, RIGHT, p[0]);
             break;
 
         case 'D':
             match('D');
-            if (n == -1)
-                n = 1;
+            if (p[0] == -1)
+                p[0] = 1;
 
-            for (size_t i=0 ; i<n ; i++)
+            for (size_t i=0 ; i<p[0] ; i++)
                 if (sb->data[sb->line][sb->col-i] == '\0')
                     sb->data[sb->line][sb->col-i] = ' ';
 
-            sbMoveBy(sb, LEFT, n);
+            sbMoveBy(sb, LEFT, p[0]);
             break;
 
         case 'E':
             match('E');
-            if (n == -1)
-                n = 1;
-            sbMoveBy(sb, DOWN, n);
+            if (p[0] == -1)
+                p[0] = 1;
+            sbMoveBy(sb, DOWN, p[0]);
             sb->col = 0;
             break;
 
         case 'F':
             match('F');
-            if (n == -1)
-                n = 1;
-            sbMoveBy(sb, UP, n);
+            if (p[0] == -1)
+                p[0] = 1;
+            sbMoveBy(sb, UP, p[0]);
             sb->col = 0;
             break;
 
         case 'G':
             match('G');
-            if (n == -1)
-                n = 1;
-            sb->col = n;
+            if (p[0] == -1)
+                p[0] = 1;
+            sb->col = p[0];
             break;
 
         case 'f':
         case 'H':
             match(LOOK);
-            if (n == -1)
-                n = 1;
-            if (m == -1)
-                m = 1;
-            sbMoveTo(sb, n, m);
+            if (p[0] == -1)
+                p[0] = 1;
+            if (p[1] == -1)
+                p[1] = 1;
+            sbMoveTo(sb, p[0], p[1]);
             break;
 
         case 'J':
@@ -157,8 +158,8 @@ bool csiCode(ScreenBuffer sb) {
 
         case 'K':
             match('K');
-            size_t start = (n == 1 || n == 2)  ? 0 : sb->col;
-            size_t end   =  n == 1 ? sb->col : SB_MAX_WIDTH-1;
+            size_t start = (p[0] == 1 || p[0] == 2)  ? 0 : sb->col;
+            size_t end   =  p[0] == 1 ? sb->col : SB_MAX_WIDTH-1;
             size_t tmp   = sb->col;
 
             for (sb->col = start ; sb->col < end;) {
@@ -212,7 +213,7 @@ bool csiCode(ScreenBuffer sb) {
     return true;
 }
 
-bool csiParam(ScreenBuffer sb, long* n, long* m) {
+bool csiParam(ScreenBuffer sb, long* params) {
     if (!sb)
         return false;
 
@@ -225,35 +226,24 @@ bool csiParam(ScreenBuffer sb, long* n, long* m) {
     if (LOOK == '?')
         match('?');
 
-    while (LOOK >= '0' && LOOK <= '9') {
-        buf[buflen] = LOOK;
-        buflen++;
+    for (int i=0 ; i<4 ; i++) {
+        while (LOOK >= '0' && LOOK <= '9') {
+            buf[buflen] = LOOK;
+            buflen++;
 
-        if (buflen > MAX_ANSI_PARAM_LENGTH)
-            error("parameter too long");
+            if (buflen > MAX_ANSI_PARAM_LENGTH)
+                error("parameter too long");
 
-        match(LOOK);
+            match(LOOK);
+        }
+
+        params[i] = strtol(buf, NULL, 10);
+
+        if (isAnsiTrailChar(LOOK))
+            return true;
+
+        match(';');
     }
-
-    *n = strtol(buf, NULL, 10);
-
-    if (isAnsiTrailChar(LOOK))
-        return true;
-
-    match(';');
-
-    while (LOOK >= '0' && LOOK <= '9') {
-        buf[buflen] = LOOK;
-        buflen++;
-
-        if (buflen > MAX_ANSI_PARAM_LENGTH)
-            error("parameter too long");
-
-        match(LOOK);
-    }
-
-    *m = strtol(buf, NULL, 10);
-
     return true;
 }
 
