@@ -362,22 +362,9 @@ void feedInput(char* fname) {
 
     acPush(autocleaner, AC_FUNC(free), INPUT);
 
-    if (!fread(INPUT, sizeof(char), fsize, typescript) && !typescript)
-        error("cannot read file");
+    fsize = fread(INPUT, sizeof(char), fsize, typescript);
 
-    if (fsize = MAX_STDIN_INPUT) {
-        fsize = strlen(INPUT);
-        char* new_buffer = malloc(sizeof(char) * fsize);
-
-        if (!new_buffer)
-            error("out of memory");
-
-        strcpy(new_buffer, INPUT);
-        free(INPUT);
-
-        INPUT = new_buffer;
-    }
-    else {
+    if (typescript) {
         fclose(typescript);
         acPop(autocleaner);
     }
