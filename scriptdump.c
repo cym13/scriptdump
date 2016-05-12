@@ -16,7 +16,8 @@ static AutoCleaner autocleaner;
 void printHelp(FILE* output) {
     fputs("Strip a file of its ansi code\n",             output);
     fputs("\n",                                          output);
-    fputs("Usage: scriptdump [-h] FILE\n",               output);
+    fputs("Usage: scriptdump -h\n",                      output);
+    fputs("       scriptdump [-f] FILE\n",               output);
     fputs("\n",                                          output);
     fputs("Arguments:\n",                                output);
     fputs("    FILE    The file to be stripped off.\n",  output);
@@ -24,6 +25,7 @@ void printHelp(FILE* output) {
     fputs("\n",                                          output);
     fputs("Options:\n",                                  output);
     fputs("    -h, --help   Print this help and exit\n", output);
+    fputs("    -f, --force  Ignore parsing errors\n",    output);
 }
 
 void match(char c) {
@@ -374,8 +376,9 @@ void feedInput(char* fname) {
     LOOK = INPUT[0];
 }
 
+// TODO: better argument management
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
+    if (argc < 2) {
         printHelp(stderr);
         return 1;
     }
@@ -383,6 +386,13 @@ int main(int argc, char *argv[]) {
     if (!strcmp(argv[1], "-h") || (!strcmp(argv[1], "--help"))) {
         printHelp(stdout);
         return 0;
+    }
+
+    bool forceOutput = false;
+
+    if (!strcmp(argv[1], "-f") || (!strcmp(argv[1], "--force"))) {
+        forceOutput = true;
+        argv[1] = argv[2];
     }
 
     acInit(autocleaner);
@@ -396,7 +406,7 @@ int main(int argc, char *argv[]) {
 
     acPush(autocleaner, AC_FUNC(sbClean), sb);
 
-    if (!text(sb))
+    if (!text(sb) && !forceOutput)
         error("parsing failed");
 
     for (size_t line = 0 ; line < SB_MAX_HEIGHT ; line++) {

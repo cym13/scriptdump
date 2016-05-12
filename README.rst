@@ -12,7 +12,8 @@ Documentation
 
     Strip a file of its ansi code
 
-    Usage: scriptdump [-h] FILE
+    Usage: scriptdump -h
+           scriptdump [-f] FILE
 
     Arguments:
         FILE    The file to be stripped off.
@@ -20,6 +21,7 @@ Documentation
 
     Options:
         -h, --help   Print this help and exit
+        -f, --force  Ignore parsing errors
 
 Bugs
 ====
