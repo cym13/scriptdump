@@ -404,15 +404,13 @@ int main(int argc, char *argv[]) {
 
     ScreenBuffer sb = calloc(1, sizeof(struct ScreenBuffer));
 
-    if (!sbInit(sb)) {
+    if (!sbInit(sb))
         error("initialization failure");
-    }
 
     acPush(autocleaner, AC_FUNC(sbClean), sb);
 
-    if (!text(sb)) {
+    if (!text(sb))
         error("parsing failed");
-    }
 
     for (size_t line = 0 ; line < SB_MAX_HEIGHT ; line++) {
         if (sb->data[line][0] == '\0')
