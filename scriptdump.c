@@ -189,6 +189,10 @@ bool csiCode(ScreenBuffer sb) {
             // TODO
             break;
 
+        case 'r':
+            match('r');
+            break;
+
         case 's':
             match('s');
             sbSavePos(sb);
@@ -252,47 +256,7 @@ bool nonCsiCode(ScreenBuffer sb) {
     if (!sb)
         return false;
 
-    switch (LOOK) {
-        case 'N':
-            match('N');
-            break;
-
-        case 'O':
-            match('O');
-            break;
-
-        case 'P':
-            match('P');
-            break;
-
-        case 'c':
-            match('c');
-            break;
-
-        case '^':
-            match('^');
-            break;
-
-        case '_':
-            match('_');
-            break;
-
-        case ']':
-            match(']');
-            break;
-
-        case '=':
-            match('=');
-            break;
-
-        case '>':
-            match('>');
-            break;
-
-        default:
-            return false;
-    }
-
+    match(LOOK);
     return true;
 }
 
@@ -348,7 +312,7 @@ bool isAnsiTrailChar(char c) {
     switch (c) {
         case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G':
         case 'H': case 'J': case 'K': case 'S': case 'T': case 'f': case 'm':
-        case 'n': case 's': case 'u': case 'l': case 'h':
+        case 'n': case 'r': case 's': case 'u': case 'l': case 'h':
             return true;
         default:
             return false;
