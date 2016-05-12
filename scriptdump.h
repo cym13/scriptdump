@@ -48,5 +48,6 @@ bool isSpecialChar(char c);
 bool isAnsiTrailChar(char c);
 
 void feedInput(char* fname);
+void printHelp(FILE* output);
 
 #endif

@@ -13,6 +13,19 @@ static size_t INPUT_POS = 0;
 
 static AutoCleaner autocleaner;
 
+void printHelp(FILE* output) {
+    fputs("Strip a file of its ansi code\n",             output);
+    fputs("\n",                                          output);
+    fputs("Usage: scriptdump [-h] FILE\n",               output);
+    fputs("\n",                                          output);
+    fputs("Arguments:\n",                                output);
+    fputs("    FILE    The file to be stripped off.\n",  output);
+    fputs("            '-' means standard input\n",      output);
+    fputs("\n",                                          output);
+    fputs("Options:\n",                                  output);
+    fputs("    -h, --help   Print this help and exit\n", output);
+}
+
 void match(char c) {
     if (LOOK != c)
         expectChar(c);
@@ -352,9 +365,13 @@ void feedInput(char* fname) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        puts("Dump script output with no ansi code left");
-        puts("Usage: scriptdump FILE");
+        printHelp(stderr);
         return 1;
+    }
+
+    if ((argv[1] == "-h") || (argv[1] == "--help")) {
+        printHelp(stdout);
+        return 0;
     }
 
     acInit(autocleaner);
