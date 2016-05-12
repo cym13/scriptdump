@@ -39,7 +39,7 @@ void match(char c);
 bool text(ScreenBuffer sb);
 bool ansiCode(ScreenBuffer sb);
 bool csiCode(ScreenBuffer sb);
-bool csiParam(ScreenBuffer sb, long* n, long* m);
+bool csiParam(ScreenBuffer sb, long* param);
 bool nonCsiCode(ScreenBuffer sb);
 bool specialChar(ScreenBuffer sb);
 bool rawChar(ScreenBuffer sb);
